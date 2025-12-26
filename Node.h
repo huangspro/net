@@ -1,199 +1,235 @@
-#ifndef _NODE_H_
-#define _NODE_H_
+#ifndef _OPE_H_
+#define _OPE_H_
 #include <cmath>
 #include <vector>
 
-class Var {
+class Var;
+class Ope {
 public:
-    double data;
-    double gradient;
-    Var(double d, double g = 0.0) : data(d), gradient(g) {}
+  Ope() {}
+  virtual void forward(){}; 
+  virtual void backward() {};
+  virtual void load(Var*,Var*,Var*){};
+  virtual void load(Var*,Var*){};
+  virtual ~Ope() {}
 };
 
-class Node {
+class Var {
 public:
-    Node() {}
-    virtual double forword() = 0; // 统一拼写
-    virtual void backward() = 0;
-    virtual ~Node() {}
+  double data;
+  double gradient;
+  std::vector<Ope*> next;
+  Var(double d, double g) : data(d), gradient(g) {}
+  void load(std::vector<Ope*> n) { next = n; }
 };
 
 // =====================================================================================
 
-class Add : public Node {
+class Add : public Ope {
 public:
-    Var *a, *b, *out;
-    Add(Var* input_a, Var* input_b, Var* output) : a(input_a), b(input_b), out(output) {}
+  Var *a = nullptr, *b = nullptr, *out = nullptr;
+  Add() {}
+  void load(Var* a,Var* b){}
+  void load(Var* input_a, Var* input_b, Var* output) {
+    a = input_a; b = input_b; out = output;
+  }
+
+  void forward() override {
+    out->data = a->data + b->data;
     
-    double forword() override {
-        out->data = a->data + b->data;
-        return out->data;
-    }
-    void backward() override {
-        a->gradient += out->gradient;
-        b->gradient += out->gradient;
-    }
+  }
+  void backward() override {
+    a->gradient += out->gradient;
+    b->gradient += out->gradient;
+  }
 };
 
-class Mul : public Node {
+class Mul : public Ope {
 public:
-    Var *a, *b, *out;
-    Mul(Var* input_a, Var* input_b, Var* output) : a(input_a), b(input_b), out(output) {}
+  Var *a = nullptr, *b = nullptr, *out = nullptr;
+  Mul() {}
+  void load(Var* a,Var* b){}
+  void load(Var* input_a, Var* input_b, Var* output) {
+    a = input_a; b = input_b; out = output;
+  }
 
-    double forword() override {
-        out->data = a->data * b->data;
-        return out->data;
-    }
-    void backward() override {
-        a->gradient += out->gradient * b->data;
-        b->gradient += out->gradient * a->data;
-    }
+  void forward() override {
+    out->data = a->data * b->data;
+    
+  }
+  void backward() override {
+    a->gradient += out->gradient * b->data;
+    b->gradient += out->gradient * a->data;
+  }
 };
 
-class Dev : public Node {
+class Dev : public Ope {
 public:
-    Var *a, *out;
-    Dev(Var* input_a, Var* output) : a(input_a), out(output) {}
+  Var *a = nullptr, *out = nullptr;
+  Dev() {}
+  void load(Var* a,Var* b, Var* c){}  
+  void load(Var* input_a, Var* output) {
+    a = input_a; out = output;
+  }
 
-    double forword() override {
-        out->data = 1.0 / a->data;
-        return out->data;
-    }
-    void backward() override {
-        a->gradient += out->gradient * (-1.0 / (a->data * a->data));
-    }
+  void forward() override {
+    out->data = 1.0 / a->data;
+    
+  }
+  void backward() override {
+    a->gradient += out->gradient * (-1.0 / (a->data * a->data));
+  }
 };
 
-class Minus : public Node {
+class Minus : public Ope {
 public:
-    Var *a, *out;
-    Minus(Var* input_a, Var* output) : a(input_a), out(output) {}
+  Var *a = nullptr, *out = nullptr;
+  Minus() {}
+  void load(Var* a,Var* b, Var* c){}
+  void load(Var* input_a, Var* output) {
+    a = input_a; out = output;
+  }
 
-    double forword() override {
-        out->data = -1.0 * a->data;
-        return out->data;
-    }
-    void backward() override {
-        a->gradient += out->gradient * (-1.0);
-    }
+  void forward() override {
+    out->data = -1.0 * a->data;
+    
+  }
+  void backward() override {
+    a->gradient += out->gradient * (-1.0);
+  }
 };
 
-class Relu : public Node {
+class Relu : public Ope {
 public:
-    Var *a, *out;
-    Relu(Var* input_a, Var* output) : a(input_a), out(output) {}
+  Var *a = nullptr, *out = nullptr;
+  Relu() {}
+  void load(Var* a,Var* b, Var* c){}
+  void load(Var* input_a, Var* output) {
+    a = input_a; out = output;
+  }
 
-    double forword() override {
-        out->data = a->data > 0 ? a->data : 0;
-        return out->data;
-    }
-    void backward() override {
-        a->gradient += out->gradient * (a->data > 0 ? 1.0 : 0.0);
-    }
+  void forward() override {
+    out->data = a->data > 0 ? a->data : 0;
+    
+  }
+  void backward() override {
+    a->gradient += out->gradient * (a->data > 0 ? 1.0 : 0.0);
+  }
 };
 
-class Sigmoid : public Node {
+class Sigmoid : public Ope {
 public:
-    Var *a, *out;
-    Sigmoid(Var* input_a, Var* output) : a(input_a), out(output) {}
+  Var *a = nullptr, *out = nullptr;
+  Sigmoid() {}
+  void load(Var* a,Var* b, Var* c){}
+  void load(Var* input_a, Var* output) {
+    a = input_a; out = output;
+  }
 
-    double forword() override {
-        out->data = 1.0 / (1.0 + exp(-a->data));
-        return out->data;
-    }
-    void backward() override {
-        double s = out->data; // 直接利用forward存好的结果
-        a->gradient += out->gradient * (s * (1.0 - s));
-    }
+  void forward() override {
+    out->data = 1.0 / (1.0 + exp(-a->data));
+    
+  }
+  void backward() override {
+    double s = out->data; 
+    a->gradient += out->gradient * (s * (1.0 - s));
+  }
 };
 
-class Tanh : public Node {
+class Tanh : public Ope {
 public:
-    Var *a, *out;
-    Tanh(Var* input_a, Var* output) : a(input_a), out(output) {}
+  Var *a = nullptr, *out = nullptr;
+  Tanh() {}
+  void load(Var* a,Var* b, Var* c){}
+  void load(Var* input_a, Var* output) {
+    a = input_a; out = output;
+  }
 
-    double forword() override {
-        out->data = tanh(a->data);
-        return out->data;
-    }
-    void backward() override {
-        double t = out->data;
-        a->gradient += out->gradient * (1.0 - t * t);
-    }
+  void forward() override {
+    out->data = tanh(a->data);
+    
+  }
+  void backward() override {
+    double t = out->data;
+    a->gradient += out->gradient * (1.0 - t * t);
+  }
 };
 
-class Exp : public Node {
+class Exp : public Ope {
 public:
-    Var *a, *out;
-    Exp(Var* input_a, Var* output) : a(input_a), out(output) {}
+  Var *a = nullptr, *out = nullptr;
+  Exp() {}
+  void load(Var* a,Var* b, Var* c){}
+  void load(Var* input_a, Var* output) {
+    a = input_a; out = output;
+  }
 
-    double forword() override {
-        out->data = exp(a->data);
-        return out->data;
-    }
-    void backward() override {
-        a->gradient += out->gradient * out->data;
-    }
+  void forward() override {
+    out->data = exp(a->data);
+    
+  }
+  void backward() override {
+    a->gradient += out->gradient * out->data;
+  }
 };
 
-class Ln : public Node {
+class Ln : public Ope {
 public:
-    Var *a, *out;
-    Ln(Var* input_a, Var* output) : a(input_a), out(output) {}
+  Var *a = nullptr, *out = nullptr;
+  Ln() {}
+  void load(Var* a,Var* b, Var* c){}
+  void load(Var* input_a, Var* output) {
+    a = input_a; out = output;
+  }
 
-    double forword() override {
-        out->data = log(a->data);
-        return out->data;
-    }
-    void backward() override {
-        a->gradient += out->gradient * (1.0 / a->data);
-    }
+  void forward() override {
+    out->data = log(a->data);
+    
+  }
+  void backward() override {
+    a->gradient += out->gradient * (1.0 / a->data);
+  }
 };
 
-class Pow : public Node {
-public:
-    Var *a, *out;
-    double exponent;
-    Pow(Var* input_a, Var* output, double e) : a(input_a), out(output), exponent(e) {}
 
-    double forword() override {
-        out->data = pow(a->data, exponent);
-        return out->data;
-    }
-    void backward() override {
-        a->gradient += out->gradient * (exponent * pow(a->data, exponent - 1));
-    }
+
+class Sqrt : public Ope {
+public:
+  Var *a = nullptr, *out = nullptr;
+  Sqrt() {}
+  void load(Var* a,Var* b, Var* c){}
+  void load(Var* input_a, Var* output) {
+    a = input_a; out = output;
+  }
+
+  void forward() override {
+    out->data = sqrt(a->data);
+    
+  }
+  void backward() override {
+    a->gradient += out->gradient * (1.0 / (2.0 * out->data));
+  }
 };
 
-class Sqrt : public Node {
+class SquareDiff : public Ope {
 public:
-    Var *a, *out;
-    Sqrt(Var* input_a, Var* output) : a(input_a), out(output) {}
+  Var *a = nullptr, *b = nullptr, *out = nullptr;
+  SquareDiff() {}
+  void load(Var* a,Var* b){}
+  void load(Var* input_a, Var* input_b, Var* output) {
+    a = input_a; b = input_b; out = output;
+  }
 
-    double forword() override {
-        out->data = sqrt(a->data);
-        return out->data;
-    }
-    void backward() override {
-        a->gradient += out->gradient * (1.0 / (2.0 * out->data));
-    }
-};
-
-class SquareDiff : public Node {
-public:
-    Var *a, *b, *out;
-    SquareDiff(Var* input_a, Var* input_b, Var* output) : a(input_a), b(input_b), out(output) {}
-
-    double forword() override {
-        double diff = a->data - b->data;
-        out->data = diff * diff;
-        return out->data;
-    }
-    void backward() override {
-        double diff = a->data - b->data;
-        a->gradient += out->gradient * (2.0 * diff);
-        b->gradient += out->gradient * (-2.0 * diff);
-    }
+  void forward() override {
+    double diff = a->data - b->data;
+    out->data = diff * diff;
+    
+  }
+  void backward() override {
+    double diff = a->data - b->data;
+    a->gradient += out->gradient * (2.0 * diff);
+    b->gradient += out->gradient * (-2.0 * diff);
+  }
 };
 
 #endif
