@@ -14,9 +14,14 @@ int main(){
   tem.push_back(o1);
   root->load(tem);
   
+  v1->gradient=1;
   allopes.push_back(o1);
   for(auto i=allopes.begin();i!=allopes.end();i++){
       (*i)->forward();
   }
-  cout<<v1->data;
+  for(auto i=allopes.rbegin();i!=allopes.rend();i++){
+      (*i)->backward();
+  }
+  
+  cout<<root->gradient<<endl;
 }
