@@ -1,5 +1,12 @@
+/*
+This a program of Nodes in the calculation Chart
+We supposed that every operation has a single output and multiple inputs(some has only one input}
+The Var Node is to storage the data
+The Node is to express the operation, it can calculate the gradient of input nodes when backward and figure out the output in forward 
+*/
+
 #ifndef _NODE_H_
-#define _NODE_H_  // ← Fixed: was missing #define
+#define _NODE_H_ 
 #include<cmath>
 
 class Node {
