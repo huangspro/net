@@ -114,4 +114,19 @@ public:
   }
 };
 
+class HiddenLayer{
+public:
+  int neuron;
+  int last_layer_neuron_number;
+  vector<Var*> input,bias,layer_output;
+  vector<vector<Var*>> weights,mul_output;
+  vector<Ope*> superadd,add;
+  vector<vector<Ope*>>mul; 
+  HiddenLayer(int n, int last_layer):neuron(n),last_layer_neuron_number(last){
+    //create
+    
+    
+    
+  }
+};
 #endif
