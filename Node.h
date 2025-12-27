@@ -36,11 +36,34 @@ public:
 
   void forward() override {
     out->data = a->data + b->data;
-    
   }
   void backward() override {
     a->gradient += out->gradient;
     b->gradient += out->gradient;
+  }
+};
+
+class SuperAdd{
+public:
+  vector<Var*> inputs;
+  Var* out;
+  SuperAdd(){}
+  void load(vector<Var*>& tem, Var* o){
+    inputs=tem;
+    out=o;
+  }
+  void forward(){
+    double tem=0;
+    for(auto i=inputs.begin();i!=inputs.end();i++){
+      tem+=(*i)->data;
+    }
+    out->data=tem;
+  }
+  
+  void backfard(){
+    for(auto i=inputs.begin();i!=inputs.end();i++){
+      (*i)->gradient=(out->gradient;
+    }
   }
 };
 
