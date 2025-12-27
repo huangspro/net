@@ -155,6 +155,11 @@ public:
       superadd[i]->load(tem);
       add[i]->load(superadd[i],bias[i],layer_output[i]);
     }
+    for(int i=0;i<n;i++){
+      for(int ii=0;ii<last_layer;ii++){
+        input[i]->load(mul[i]);
+      }
+    }
   }
 };
 #endif
