@@ -4,24 +4,43 @@
 using namespace std;
 
 int main(){
-  vector<Ope*> allopes;
+  vector<Ope*> o;
+  vector<Var*> v;
+  for(int i=0;i<9;i++){v.push_back(new Var(0,0));}
+  o.push_back(new Dev());
+  o.push_back(new Minus());
+  o.push_back(new Dev());
+  o.push_back(new Add());
+  o.push_back(new Add());
+  o.push_back(new Ln());
   
-  Var* root=new Var(1,0);
-  Ope* o1=new Minus();
-  Var* v1=new Var(1,0);
-  o1->load(root,v1);
-  vector<Ope*> tem;
-  tem.push_back(o1);
-  root->load(tem);
+  v[0]->load(o[0]);
+  v[1]->load(o[1]);
+  v[2]->load(o[2]);
+  v[4-1]->load(o[3]);
+  v[5-1]->load(o[3]);
+  v[7-1]->load(o[4]);
+  v[5]->load(o[4]);
+  v[7]->load(o[5]);
+  v[8]->load(nullptr);
   
-  v1->gradient=1;
-  allopes.push_back(o1);
-  for(auto i=allopes.begin();i!=allopes.end();i++){
+  o[0]->load(v[0],v[3]);
+  o[1]->load(v[1],v[4]);
+  o[2]->load(v[2],v[6]);
+  o[3]->load(v[3],v[4],v[5]);
+  o[4]->load(v[5],v[6],v[7]);
+  o[5]->load(v[7],v[8]);
+  
+  v[0]->data=1.9;
+  v[1]->data=-1.6;
+  v[2]->data=0.3;
+  v[8]->gradient=0.36;
+  for(auto i=o.begin();i!=o.end();i++){
       (*i)->forward();
   }
-  for(auto i=allopes.rbegin();i!=allopes.rend();i++){
+  cout<<v[8]->data<<endl;
+  for(auto i=o.rbegin();i!=o.rend();i++){
       (*i)->backward();
   }
-  
-  cout<<root->gradient<<endl;
+  cout<<v[0]->gradient<<"  "<<v[1]->gradient<<"  "<<v[2]->gradient<<endl;
 }

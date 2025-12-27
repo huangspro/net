@@ -20,7 +20,7 @@ public:
   double gradient;
   std::vector<Ope*> next;
   Var(double d, double g) : data(d), gradient(g) {}
-  void load(std::vector<Ope*> n) { next = n; }
+  void load(Ope* n) { next.push_back(n); }
 };
 
 // =====================================================================================
