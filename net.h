@@ -124,9 +124,37 @@ public:
   vector<vector<Ope*>>mul; 
   HiddenLayer(int n, int last_layer):neuron(n),last_layer_neuron_number(last){
     //create
-    
-    
-    
+    for(int i=0;i<n;i++){
+      bias[i]=new Var(0,0);
+      layer_output[i]=new Var(0,0);
+      superadd[i]=new Ope();
+      add[i]=new Ope();
+    }
+    for(int i=0;i<last_layer;i++){
+      input[i]=new Var(0,0);
+    }
+    for(int i=0;i<n;i++){
+      vector<Var*> tem_mul_output(last_layer);
+      vector<Var*> tem_weights(last_layer);
+      vector<Ope*> tem_mul(last_layer);
+      for(int ii=0;ii<last_layer;ii++){
+        tem_mul_output[ii]=new Var(0,0);
+        tem_weights[ii]=new Var(0,0);
+        tem_mul[ii]=new Ope();
+      }
+      mul_output.push_back(tem_mul_output);
+      weights.push_back(tem_weights);
+      mull.push_back(tem_mul);
+    }
+    //load
+    for(int i=0;i<n;i++){
+      bias[i]->load(add[i]);
+      layer_output[i]->load(nullptr);
+      vector<Var*> tem(n);
+      for(int ii=0;ii<last_layer;ii++)tem.push_back(mul_output[ii]);
+      superadd[i]->load(tem);
+      add[i]->load(superadd[i],bias[i],layer_output[i]);
+    }
   }
 };
 #endif
