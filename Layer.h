@@ -173,7 +173,8 @@ public:
     //load the superadd operation nodes
     for(int i=0;i<n;i++){
       for(int ii=0;ii<last_layer;ii++){
-        superadd[i]->load(mul_output[i][ii]);
+        superadd[i]->load_input(mul_output[i][ii]);
+        superadd[i]->load_output(layer_output[i]);
       }
     }
   }
@@ -213,6 +214,37 @@ public:
         delete mul_output[i][ii];
         delete weights[i][ii];
       }
+    }
+  }
+};
+
+class SoftmaxLayer{
+public:  
+  int neuron;
+  std::vector<Var*> input, e_output, layer_output;
+  Var* superadd_output, dev_output;
+  std::vector<Ope*> exp, mul;
+  Ope* superadd, dev;
+  
+  Softmax(int n):neuron(n){
+    //create nodes
+    superadd_output=new Var(0,0);
+    dev_output=new Var(0,0);
+    superadd=new SuperAdd();
+    dev=new Dev();
+    //load all the nodes
+    superadd->load_output(superadd_output);
+    dev->load(superadd_output,dev_output);
+    for(int i=0;i<n;i++){
+      input.push_back(new Var(0,0));
+      e_output.push_back(new Var(0,0));
+      layer_output.push_back(new Var(0,0));
+      exp.push_back(new Exp());
+      mul.push_back(new Mul());
+      //load all the nodes
+      mul[i]->load(dev_output[i],e_output[i],layer_output[i]);
+      exp[i]->load(input[i],e_output[i]);
+      superadd->load_input(e_output[i]);
     }
   }
 };

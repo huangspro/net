@@ -52,8 +52,11 @@ public:
   std::vector<Var*> inputs;
   Var* out;
   SuperAdd(){}
-  void load(Var* o){
+  void load_input(Var* o){
     inputs.push_back(o);
+  }
+  void load_output(Var* i){
+    out=i;
   }
   void forward(){
     double tem=0;
@@ -193,7 +196,6 @@ public:
 
   void forward() override {
     out->data = exp(a->data);
-    
   }
   void backward() override {
     a->gradient += out->gradient * out->data;
