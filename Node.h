@@ -7,10 +7,11 @@ class Var;
 class Ope {
 public:
   Ope() {}
-  virtual void forward(){}; 
-  virtual void backward() {};
-  virtual void load(Var*,Var*,Var*){};
-  virtual void load(Var*,Var*){};
+  virtual void forward(){}
+  virtual void backward() {}
+  virtual void load(Var*,Var*,Var*){}
+  virtual void load(Var*,Var*){}
+  virtual void load(Var*){}
   virtual ~Ope() {}
 };
 
@@ -18,9 +19,7 @@ class Var {
 public:
   double data;
   double gradient;
-  std::vector<Ope*> next;
   Var(double d, double g) : data(d), gradient(g) {}
-  void load(Ope* n) { next.push_back(n); }
 };
 
 // =====================================================================================
@@ -43,14 +42,13 @@ public:
   }
 };
 
-class SuperAdd{
+class SuperAdd : public Ope{
 public:
-  vector<Var*> inputs;
+  std::vector<Var*> inputs;
   Var* out;
   SuperAdd(){}
-  void load(vector<Var*>& tem, Var* o){
-    inputs=tem;
-    out=o;
+  void load(Var* o){
+    inputs.push_back(o);
   }
   void forward(){
     double tem=0;
@@ -59,10 +57,11 @@ public:
     }
     out->data=tem;
   }
-  
+  void load(Var* a, Var* b, Var* c){}
+  void load(Var* a, Var* b){}
   void backfard(){
     for(auto i=inputs.begin();i!=inputs.end();i++){
-      (*i)->gradient=(out->gradient;
+      (*i)->gradient=out->gradient;
     }
   }
 };
