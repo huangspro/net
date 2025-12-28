@@ -1,6 +1,6 @@
 /*
 This file contains some basic neural net layers
-Input Layer, Softmax Layer, Hidden Layer, Nonlinear Layer, LossLayer
+Input Layer, Softmax Layer, Hidden Layer, Nonlinear Layer, MeanSquareErrorLayer
 1. an input layer contains input nodes and multiply inputs with weights
 2. a Softmax layer contains input nodes and calculate the softmax function output of inputs
 3. a hidden layer can receive the inputs of the last layer and calculate the output with weights
@@ -310,15 +310,15 @@ public:
   }
 };
 
-//LossLayer
-class LossLayer{
+//MeanSquareErrorLayer
+class MeanSquareErrorLayer{
 public:
   int neuron;
   std::vector<Var*> input,input_from_outside,minus_output,add_output,square_output;
   Var* layer_output;
   std::vector<Ope*> minus,add,square;
   Ope* superadd;
-  LossLayer(int n):neuron(n){
+  MeanSquareErrorLayer(int n):neuron(n){
     superadd=new SuperAdd();
     layer_output=new Var(0,0);
     for(int i=0;i<n;i++){
@@ -372,7 +372,7 @@ public:
       input_from_outside[i]->data=one_data[i];
     }
   }
-  ~LossLayer(){
+  ~MeanSquareErrorLayer(){
     delete layer_output;
     delete superadd;
     for(int i=0;i<neuron;i++){
