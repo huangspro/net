@@ -86,7 +86,6 @@ public:
 
   void forward() override {
     out->data = a->data * b->data;
-    
   }
   void backward() override {
     a->gradient += out->gradient * b->data;
@@ -105,7 +104,6 @@ public:
 
   void forward() override {
     out->data = 1.0 / a->data;
-    
   }
   void backward() override {
     a->gradient += out->gradient * (-1.0 / (a->data * a->data));
@@ -123,7 +121,6 @@ public:
 
   void forward() override {
     out->data = -1.0 * a->data;
-    
   }
   void backward() override {
     a->gradient += out->gradient * (-1.0);
@@ -141,7 +138,6 @@ public:
 
   void forward() override {
     out->data = a->data > 0 ? a->data : 0;
-    
   }
   void backward() override {
     a->gradient += out->gradient * (a->data > 0 ? 1.0 : 0.0);
@@ -159,7 +155,6 @@ public:
 
   void forward() override {
     out->data = 1.0 / (1.0 + exp(-a->data));
-    
   }
   void backward() override {
     double s = out->data; 
@@ -178,7 +173,6 @@ public:
 
   void forward() override {
     out->data = tanh(a->data);
-    
   }
   void backward() override {
     double t = out->data;
@@ -214,7 +208,6 @@ public:
 
   void forward() override {
     out->data = log(a->data);
-    
   }
   void backward() override {
     a->gradient += out->gradient * (1.0 / a->data);
@@ -234,32 +227,26 @@ public:
 
   void forward() override {
     out->data = sqrt(a->data);
-    
   }
   void backward() override {
     a->gradient += out->gradient * (1.0 / (2.0 * out->data));
   }
 };
 
-class SquareDiff : public Ope {
+class Square : public Ope {
 public:
-  Var *a = nullptr, *b = nullptr, *out = nullptr;
-  SquareDiff() {}
-  void load(Var* a,Var* b){}
-  void load(Var* input_a, Var* input_b, Var* output) {
-    a = input_a; b = input_b; out = output;
+  Var *a = nullptr, *out = nullptr;
+  Sqrt() {}
+  void load(Var* a,Var* b, Var* c){}
+  void load(Var* input_a, Var* output) {
+    a = input_a; out = output;
   }
 
   void forward() override {
-    double diff = a->data - b->data;
-    out->data = diff * diff;
-    
+    out->data = (a->data)*(a->data);
   }
   void backward() override {
-    double diff = a->data - b->data;
-    a->gradient += out->gradient * (2.0 * diff);
-    b->gradient += out->gradient * (-2.0 * diff);
+    a->gradient += out->gradient * a->data*2;
   }
 };
-
 #endif

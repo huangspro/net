@@ -1,10 +1,11 @@
 /*
 This file contains some basic neural net layers
-Input Layer, Softmax Layer, Hidden Layer, Nonlinear Layer
+Input Layer, Softmax Layer, Hidden Layer, Nonlinear Layer, LossLayer
 1. an input layer contains input nodes and multiply inputs with weights
 2. a Softmax layer contains input nodes and calculate the softmax function output of inputs
 3. a hidden layer can receive the inputs of the last layer and calculate the output with weights
 4. a nonlinear layer can transform the input data with a nonlinear function like relu or tanh and output
+5. a loss layer can implement the loss function like mean square or cross-entropy
 noted that an output layer is a combination of hidden layer and other layer
 */
 
@@ -275,6 +276,19 @@ public:
       exp[i]->backward();
     }
   }
+  //a Softmax layer can should have the ability to connect with the last or the next layer
+  void connect_to_last_layer_output(std::vector<Var*> last_layer_output){
+    for(int i=0; i<last_layer_output.size(); i++){
+      delete input[i];
+      input[i]=last_layer_output[i];
+    }
+  }
+  void connect_to_next_layer_input(std::vector<Var*> next_layer_input){
+    for(int i=0; i<next_layer_input.size(); i++){
+      delete next_layer_input[i];
+      next_layer_input[i]=layer_output[i];
+    }
+  }
   ~SoftmaxLayer(){
     delete superadd_output;
     delete dev_output;
@@ -289,5 +303,12 @@ public:
       layer_output[i]=nullptr;
     }
   }
+};
+
+//LossLayer
+class LossLayer{
+public:
+  int neuron;
+  vector<Var*> input,input_from_outside
 };
 #endif
