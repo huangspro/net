@@ -12,6 +12,12 @@ noted that an output layer is a combination of hidden layer and other layer
 #ifndef _LAYER_H_
 #define _LAYER_H_
 
+#define NONLINEARLAYER 1
+#define INPUTLAYER 2
+#define SOFTMAXLAYER 3
+#define HIDDENLAYER 4
+#define MEANSQUAREERRORLAYER 5
+
 #include "Node.h"
 #include<vector>
 #include<iostream>
@@ -19,14 +25,19 @@ noted that an output layer is a combination of hidden layer and other layer
 //This class is only for produce polymorphism 
 class Layer{
 public:
+  int type;
+  std::vector<Var*> input,layer_output;
   Layer(){}
   ~Layer(){}
+  virtual void connect_to_last_layer_output(std::vector<Var*> a){};
+  virtual void connect_to_next_layer_input(std::vector<Var*> a){}
   virtual void none(){}
 };
 
 //This layer is the core layer of a neural net, containing a nonlinear function
 class NonlinearLayer : public Layer{
 public:
+  int type=NONLINEARLAYER;//this variable name of the layer
   static const int RELU=1;
   static const int TANH=2;
   static const int SIGMOID=3;
@@ -92,6 +103,7 @@ public:
 //This layer is an input layer, which can tackle data input
 class InputLayer : public Layer{
 public:
+  int type=INPUTLAYER;//this variable name of the layer
   int neuron; 
   std::vector<Var*> input, weight, bias, mul_output, add_output, layer_output;
   std::vector<Ope*> mul, add;
@@ -156,6 +168,7 @@ public:
 //This layer is a hiddenlayer, containing two dimensional vector to store the weights for each unit
 class HiddenLayer : public Layer{
 public:
+  int type=HIDDENLAYER;//this variable name of the layer
   int neuron;
   int last_layer_neuron_number;
   std::vector<Var*> input,bias,layer_output;
@@ -241,6 +254,7 @@ public:
 //This layer is for calculate the softmax function output
 class SoftmaxLayer : public Layer{
 public:  
+  int type=SOFTMAXLAYER;//this variable name of the layer
   int neuron;
   std::vector<Var*> input, e_output, layer_output;
   Var* superadd_output, *dev_output;
@@ -322,6 +336,7 @@ public:
 //MeanSquareErrorLayer
 class MeanSquareErrorLayer : public Layer{
 public:
+  int type=MEANSQUAREERRORLAYER;//this variable name of the layer
   int neuron;
   std::vector<Var*> input,input_from_outside,minus_output,add_output,square_output;
   Var* layer_output;
