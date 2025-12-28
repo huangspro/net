@@ -1,6 +1,11 @@
 /*
 This file contains some basic neural net layers
-InputLayer, OutputLayer, HiddenLayer, NonlinearLayer
+InputLayer, SoftmaxLayer, HiddenLayer, NonlinearLayer
+1. an inputlayer contains input nodes and multiply inputs with weights
+2. a Softmaxlayer contains input nodes and calculate the softmax function output of inputs
+3. a hidden layer can receive the inputs of the last layer and calculate the output with weights
+4. a nonlinear layer can transform the input data with a nonlinear function like relu or tanh and output
+noted that an outputlayer is a combination of hiddenlayer and 
 */
 
 #ifndef _LAYER_H_
@@ -10,6 +15,7 @@ InputLayer, OutputLayer, HiddenLayer, NonlinearLayer
 #include<vector>
 #include<iostream>
 
+//This layer is the core layer of a neural net, containing a nonlinear function
 class NonlinearLayer{
 public:
   static const int RELU=1;
@@ -20,7 +26,6 @@ public:
   std::vector<Var*> input, layer_output;
   std::vector<Ope*> opes;
   
-  //This layer is the core layer of a neural net, containing a nonlinear function
   NonlinearLayer(int n, int f):neuron(n),function_type(f){
     for(int i=0;i<n;i++){
      //create all nodes
@@ -218,15 +223,16 @@ public:
   }
 };
 
+//This layer is for calculate the softmax function output
 class SoftmaxLayer{
 public:  
   int neuron;
   std::vector<Var*> input, e_output, layer_output;
-  Var* superadd_output, dev_output;
+  Var* superadd_output, *dev_output;
   std::vector<Ope*> exp, mul;
-  Ope* superadd, dev;
+  Ope* superadd, *dev;
   
-  Softmax(int n):neuron(n){
+  SoftmaxLayer(int n):neuron(n){
     //create nodes
     superadd_output=new Var(0,0);
     dev_output=new Var(0,0);
@@ -242,9 +248,45 @@ public:
       exp.push_back(new Exp());
       mul.push_back(new Mul());
       //load all the nodes
-      mul[i]->load(dev_output[i],e_output[i],layer_output[i]);
+      mul[i]->load(dev_output,e_output[i],layer_output[i]);
       exp[i]->load(input[i],e_output[i]);
       superadd->load_input(e_output[i]);
+    }
+  }
+  //pass forward data
+  void forward(){
+    for(int i=0;i<neuron;i++){
+      exp[i]->forward();
+    }
+    superadd->forward();
+    dev->forward();
+    for(int i=0;i<neuron;i++){
+      mul[i]->forward();
+    }
+  }
+  //pass the gradient backward
+  void backward(){
+    for(int i=0;i<neuron;i++){
+      mul[i]->backward();
+    }
+    dev->backward();
+    superadd->backward();
+    for(int i=0;i<neuron;i++){
+      exp[i]->backward();
+    }
+  }
+  ~SoftmaxLayer(){
+    delete superadd_output;
+    delete dev_output;
+    delete superadd;
+    delete dev;
+    for(int i=0;i<neuron;i++){
+      delete mul[i];
+      delete input[i];
+      input[i]=nullptr;
+      delete e_output[i];
+      delete layer_output[i];
+      layer_output[i]=nullptr;
     }
   }
 };

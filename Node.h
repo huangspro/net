@@ -16,7 +16,8 @@ public:
   virtual void backward() {}
   virtual void load(Var*,Var*,Var*){}
   virtual void load(Var*,Var*){}
-  virtual void load(Var*){}
+  virtual void load_input(Var*){}
+  virtual void load_output(Var*){}
   virtual ~Ope() {}
 };
 
