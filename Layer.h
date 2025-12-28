@@ -1,11 +1,11 @@
 /*
 This file contains some basic neural net layers
-InputLayer, SoftmaxLayer, HiddenLayer, NonlinearLayer
-1. an inputlayer contains input nodes and multiply inputs with weights
-2. a Softmaxlayer contains input nodes and calculate the softmax function output of inputs
+Input Layer, Softmax Layer, Hidden Layer, Nonlinear Layer
+1. an input layer contains input nodes and multiply inputs with weights
+2. a Softmax layer contains input nodes and calculate the softmax function output of inputs
 3. a hidden layer can receive the inputs of the last layer and calculate the output with weights
 4. a nonlinear layer can transform the input data with a nonlinear function like relu or tanh and output
-noted that an outputlayer is a combination of hiddenlayer and 
+noted that an output layer is a combination of hidden layer and other layer
 */
 
 #ifndef _LAYER_H_
