@@ -1,3 +1,8 @@
+/*
+This file is to define the basic calculating node and data node for compute chart
+This file also contains the realisation of forward and gradient backward passing
+*/
+
 #ifndef _OPE_H_
 #define _OPE_H_
 #include <cmath>

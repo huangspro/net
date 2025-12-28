@@ -1,3 +1,7 @@
+/*
+This file defines some useful function
+*/
+
 #ifndef _FUNCTION_H_
 #define _FUNCTION_H_
 

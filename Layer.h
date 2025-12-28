@@ -1,3 +1,8 @@
+/*
+This file contains some basic neural net layers
+InputLayer, OutputLayer, HiddenLayer, NonlinearLayer
+*/
+
 #ifndef _LAYER_H_
 #define _LAYER_H_
 
