@@ -142,12 +142,12 @@ public:
     //layer
     //firstly, the single one dimension part
     for(int i=0;i<n;i++){
-      bias[i]=new Var(0,0);
-      layer_output[i]=new Var(0,0);
-      superadd[i]=new SuperAdd();
+      bias.push_back(new Var(0,0));
+      layer_output.push_back(new Var(0,0));
+      superadd.push_back(new SuperAdd());
     }
     for(int i=0;i<last_layer;i++){
-      input[i]=new Var(0,0);
+      input.push_back(new Var(0,0));
     }
     //the two dimension part
     for(int i=0;i<n;i++){
