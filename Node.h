@@ -23,8 +23,8 @@ public:
 
 class Var {
 public:
-  double data;
-  double gradient;
+  double data=0;
+  double gradient=0;
   Var(double d, double g) : data(d), gradient(g) {}
 };
 

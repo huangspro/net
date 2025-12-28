@@ -29,6 +29,10 @@ public:
   std::vector<Var*> input,layer_output;
   Layer(){}
   ~Layer(){}
+  virtual void forward(){}
+  virtual void backward(){}
+  virtual void load_data_from_outside(std::vector<double> a){}
+  virtual void input_data(std::vector<double> a){}
   virtual void connect_to_last_layer_output(std::vector<Var*> a){};
   virtual void connect_to_next_layer_input(std::vector<Var*> a){}
   virtual void none(){}
@@ -338,14 +342,13 @@ class MeanSquareErrorLayer : public Layer{
 public:
   int type=MEANSQUAREERRORLAYER;//this variable name of the layer
   int neuron;
-  std::vector<Var*> input,input_from_outside,minus_output,add_output,square_output;
-  Var* layer_output;
+  std::vector<Var*> input,input_from_outside,minus_output,add_output,square_output,layer_output;
   std::vector<Ope*> minus,add,square;
   Ope* superadd;
   void none(){}
   MeanSquareErrorLayer(int n):neuron(n){
     superadd=new SuperAdd();
-    layer_output=new Var(0,0);
+    layer_output.push_back(new Var(0,0));
     for(int i=0;i<n;i++){
       //create nodes
       input.push_back(new Var(0,0));
@@ -363,7 +366,7 @@ public:
       square[i]->load(add_output[i],square_output[i]);
       superadd->load_input(square_output[i]);
     }
-    superadd->load_output(layer_output);
+    superadd->load_output(layer_output[0]);
   }
   //pass data forward
   void forward(){
@@ -398,7 +401,7 @@ public:
     }
   }
   ~MeanSquareErrorLayer(){
-    delete layer_output;
+    delete layer_output[0];
     delete superadd;
     for(int i=0;i<neuron;i++){
       delete input_from_outside[i];
