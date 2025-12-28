@@ -16,8 +16,16 @@ noted that an output layer is a combination of hidden layer and other layer
 #include<vector>
 #include<iostream>
 
+//This class is only for produce polymorphism 
+class Layer{
+public:
+  Layer(){}
+  ~Layer(){}
+  virtual void none(){}
+};
+
 //This layer is the core layer of a neural net, containing a nonlinear function
-class NonlinearLayer{
+class NonlinearLayer : public Layer{
 public:
   static const int RELU=1;
   static const int TANH=2;
@@ -82,12 +90,12 @@ public:
 };
 
 //This layer is an input layer, which can tackle data input
-class InputLayer{
+class InputLayer : public Layer{
 public:
   int neuron; 
   std::vector<Var*> input, weight, bias, mul_output, add_output, layer_output;
   std::vector<Ope*> mul, add;
-  
+  void none(){}
   InputLayer(int n):neuron(n){
     for(int i=0;i<neuron;i++){
       //create the Nodes
@@ -146,7 +154,7 @@ public:
 };
 
 //This layer is a hiddenlayer, containing two dimensional vector to store the weights for each unit
-class HiddenLayer{
+class HiddenLayer : public Layer{
 public:
   int neuron;
   int last_layer_neuron_number;
@@ -154,6 +162,7 @@ public:
   std::vector<std::vector<Var*>> weights,mul_output;
   std::vector<Ope*> superadd;
   std::vector<std::vector<Ope*>>mul; 
+  void none(){}
   HiddenLayer(int n, int last_layer):neuron(n),last_layer_neuron_number(last_layer){
     //layer
     //firstly, the single one dimension part
@@ -230,14 +239,14 @@ public:
 };
 
 //This layer is for calculate the softmax function output
-class SoftmaxLayer{
+class SoftmaxLayer : public Layer{
 public:  
   int neuron;
   std::vector<Var*> input, e_output, layer_output;
   Var* superadd_output, *dev_output;
   std::vector<Ope*> exp, mul;
   Ope* superadd, *dev;
-  
+  void none(){}
   SoftmaxLayer(int n):neuron(n){
     //create nodes
     superadd_output=new Var(0,0);
@@ -311,13 +320,14 @@ public:
 };
 
 //MeanSquareErrorLayer
-class MeanSquareErrorLayer{
+class MeanSquareErrorLayer : public Layer{
 public:
   int neuron;
   std::vector<Var*> input,input_from_outside,minus_output,add_output,square_output;
   Var* layer_output;
   std::vector<Ope*> minus,add,square;
   Ope* superadd;
+  void none(){}
   MeanSquareErrorLayer(int n):neuron(n){
     superadd=new SuperAdd();
     layer_output=new Var(0,0);
