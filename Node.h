@@ -236,7 +236,7 @@ public:
 class Square : public Ope {
 public:
   Var *a = nullptr, *out = nullptr;
-  Sqrt() {}
+  Square() {}
   void load(Var* a,Var* b, Var* c){}
   void load(Var* input_a, Var* output) {
     a = input_a; out = output;

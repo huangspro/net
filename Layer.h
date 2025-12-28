@@ -123,7 +123,12 @@ public:
       (*i)->backward();
     }
   }
-  
+  //this layer can receive data outside
+  void input_data(std::vector<double> one_data){
+    for(int i=0;i<one_data.size();i++){
+      input[i]->data=one_data[i];
+    }
+  }
   ~InputLayer(){
     for(int i=0;i<neuron;i++){
      delete input[i];
@@ -309,6 +314,78 @@ public:
 class LossLayer{
 public:
   int neuron;
-  vector<Var*> input,input_from_outside
+  std::vector<Var*> input,input_from_outside,minus_output,add_output,square_output;
+  Var* layer_output;
+  std::vector<Ope*> minus,add,square;
+  Ope* superadd;
+  LossLayer(int n):neuron(n){
+    superadd=new SuperAdd();
+    layer_output=new Var(0,0);
+    for(int i=0;i<n;i++){
+      //create nodes
+      input.push_back(new Var(0,0));
+      input_from_outside.push_back(new Var(0,0));
+      minus_output.push_back(new Var(0,0));
+      add_output.push_back(new Var(0,0));
+      square_output.push_back(new Var(0,0));
+      
+      minus.push_back(new Minus());
+      add.push_back(new Add());
+      square.push_back(new Square());
+      //load all nodes
+      minus[i]->load(input_from_outside[i], minus_output[i]);
+      add[i]->load(input[i], minus_output[i],add_output[i]);
+      square[i]->load(add_output[i],square_output[i]);
+      superadd->load_input(square_output[i]);
+    }
+    superadd->load_output(layer_output);
+  }
+  //pass data forward
+  void forward(){
+    for(int i=0;i<neuron;i++){
+      minus[i]->forward();
+    } 
+    for(int i=0;i<neuron;i++){
+      add[i]->forward();
+    } 
+    for(int i=0;i<neuron;i++){
+      square[i]->forward();
+    } 
+    superadd->forward();
+  }
+  //pass gradient backward
+  void backward(){
+    superadd->backward();
+    for(int i=0;i<neuron;i++){
+      square[i]->backward();
+    } 
+    for(int i=0;i<neuron;i++){
+      add[i]->backward();
+    } 
+    for(int i=0;i<neuron;i++){
+      minus[i]->backward();
+    } 
+  }
+  //this layer should receive data from outside
+  void load_data_from_outside(std::vector<double> one_data){
+    for(int i=0;i<one_data.size();i++){
+      input_from_outside[i]->data=one_data[i];
+    }
+  }
+  ~LossLayer(){
+    delete layer_output;
+    delete superadd;
+    for(int i=0;i<neuron;i++){
+      delete input_from_outside[i];
+      delete input[i];
+      input[i]=nullptr;
+      delete add_output[i];
+      delete minus_output[i];
+      delete square_output[i];
+      delete minus[i];
+      delete add[i];
+      delete square[i];
+    } 
+  }
 };
 #endif
