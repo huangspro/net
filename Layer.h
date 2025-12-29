@@ -25,9 +25,10 @@ noted that an output layer is a combination of hidden layer and other layer
 //This class is only for produce polymorphism 
 class Layer{
 public:
-  int type;
+  int type; //store the type of the layer
+  double loss_value; //this one is for loss layer
   std::vector<Var*> input,layer_output;
-  Layer(){}
+  Layer(int a):type(a){}
   ~Layer(){}
   virtual void forward(){}
   virtual void backward(){}
@@ -41,7 +42,6 @@ public:
 //This layer is the core layer of a neural net, containing a nonlinear function
 class NonlinearLayer : public Layer{
 public:
-  int type=NONLINEARLAYER;//this variable name of the layer
   static const int RELU=1;
   static const int TANH=2;
   static const int SIGMOID=3;
@@ -50,7 +50,7 @@ public:
   std::vector<Var*> input, layer_output;
   std::vector<Ope*> opes;
   
-  NonlinearLayer(int n, int f):neuron(n),function_type(f){
+  NonlinearLayer(int n, int f):neuron(n),function_type(f),Layer(NONLINEARLAYER){
     for(int i=0;i<n;i++){
      //create all nodes
       input.push_back(new Var(0,0));
@@ -107,12 +107,11 @@ public:
 //This layer is an input layer, which can tackle data input
 class InputLayer : public Layer{
 public:
-  int type=INPUTLAYER;//this variable name of the layer
   int neuron; 
   std::vector<Var*> input, weight, bias, mul_output, add_output, layer_output;
   std::vector<Ope*> mul, add;
   void none(){}
-  InputLayer(int n):neuron(n){
+  InputLayer(int n):neuron(n),Layer(INPUTLAYER){
     for(int i=0;i<neuron;i++){
       //create the Nodes
       input.push_back(new Var(0,0));
@@ -172,7 +171,6 @@ public:
 //This layer is a hiddenlayer, containing two dimensional vector to store the weights for each unit
 class HiddenLayer : public Layer{
 public:
-  int type=HIDDENLAYER;//this variable name of the layer
   int neuron;
   int last_layer_neuron_number;
   std::vector<Var*> input,bias,layer_output;
@@ -180,7 +178,7 @@ public:
   std::vector<Ope*> superadd;
   std::vector<std::vector<Ope*>>mul; 
   void none(){}
-  HiddenLayer(int n, int last_layer):neuron(n),last_layer_neuron_number(last_layer){
+  HiddenLayer(int n, int last_layer):Layer(HIDDENLAYER),neuron(n),last_layer_neuron_number(last_layer){
     //layer
     //firstly, the single one dimension part
     for(int i=0;i<n;i++){
@@ -258,14 +256,13 @@ public:
 //This layer is for calculate the softmax function output
 class SoftmaxLayer : public Layer{
 public:  
-  int type=SOFTMAXLAYER;//this variable name of the layer
   int neuron;
   std::vector<Var*> input, e_output, layer_output;
   Var* superadd_output, *dev_output;
   std::vector<Ope*> exp, mul;
   Ope* superadd, *dev;
   void none(){}
-  SoftmaxLayer(int n):neuron(n){
+  SoftmaxLayer(int n):neuron(n),Layer(SOFTMAXLAYER){
     //create nodes
     superadd_output=new Var(0,0);
     dev_output=new Var(0,0);
@@ -340,13 +337,12 @@ public:
 //MeanSquareErrorLayer
 class MeanSquareErrorLayer : public Layer{
 public:
-  int type=MEANSQUAREERRORLAYER;//this variable name of the layer
   int neuron;
   std::vector<Var*> input,input_from_outside,minus_output,add_output,square_output,layer_output;
   std::vector<Ope*> minus,add,square;
   Ope* superadd;
   void none(){}
-  MeanSquareErrorLayer(int n):neuron(n){
+  MeanSquareErrorLayer(int n):neuron(n),Layer(MEANSQUAREERRORLAYER){
     superadd=new SuperAdd();
     layer_output.push_back(new Var(0,0));
     for(int i=0;i<n;i++){
@@ -380,6 +376,7 @@ public:
       square[i]->forward();
     } 
     superadd->forward();
+    loss_value=layer_output[0]->data;
   }
   //pass gradient backward
   void backward(){

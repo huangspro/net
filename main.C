@@ -11,4 +11,8 @@ int main(){
   N.add_layer(NONLINEARLAYER,2,0,NonlinearLayer::RELU,true);
   N.add_layer(MEANSQUAREERRORLAYER,2);
   N.build();
+  vector<double> a={1.25,2};
+  vector<double> b={1.569,4};
+  cout<<N.loss(a,b);
+  //cout<<ok[0]<<" "<<ok[1]<<endl;
 }
