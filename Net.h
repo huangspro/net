@@ -49,9 +49,33 @@ public:
       }
     }
   }
+  //call all the forward function of each layer
   void forward(){
     for(int i=0;i<AllLayer.size();i++){
       AllLayer[i]->forward();
+    }
+  }
+  //call all the backward function of each layer
+  void backward(){
+    for(int i=0;i<AllLayer.size();i++){
+      AllLayer[i]->backward();
+    }
+  }
+  //train
+  void train(){
+    for(int i=0;i<AllLayer.size();i++){
+        AllLayer[i]->train();
+    }
+  }
+  //train the net with gradient descent
+  void train_with_one_data(int epoch,std::vector<double> input, std::vector<double> train_data,bool print_loss){
+    AllLayer[0]->input_data(input);
+    AllLayer.back()->load_data_from_outside(train_data);
+    for(int i=0;i<epoch;i++){
+      forward();
+      backward();
+      train();
+      if(print_loss)std::cout<<"loss: "<<loss(input, train_data)<<std::endl;
     }
   }
   //get the lost

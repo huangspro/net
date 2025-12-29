@@ -17,11 +17,20 @@ noted that an output layer is a combination of hidden layer and other layer
 #define SOFTMAXLAYER 3
 #define HIDDENLAYER 4
 #define MEANSQUAREERRORLAYER 5
-
+#define learning_ratio -0.0001
 #include "Node.h"
 #include<vector>
 #include<iostream>
+#include<random>
+void initialize_weights(std::vector<Var*>& weights) {
+    std::default_random_engine generator;
+    std::normal_distribution<double> distribution(0.0, 0.1);
 
+    for (auto& w : weights) {
+        w->data = distribution(generator);
+        w->gradient = 0.0;
+    }
+}
 //This class is only for produce polymorphism 
 class Layer{
 public:
@@ -32,6 +41,7 @@ public:
   ~Layer(){}
   virtual void forward(){}
   virtual void backward(){}
+  virtual void train(){}
   virtual void load_data_from_outside(std::vector<double> a){}
   virtual void input_data(std::vector<double> a){}
   virtual void connect_to_last_layer_output(std::vector<Var*> a){};
@@ -112,6 +122,7 @@ public:
   std::vector<Ope*> mul, add;
   void none(){}
   InputLayer(int n):neuron(n),Layer(INPUTLAYER){
+    initialize_weights(weight);
     for(int i=0;i<neuron;i++){
       //create the Nodes
       input.push_back(new Var(0,0));
@@ -144,6 +155,14 @@ public:
     }
     for(auto i=mul.begin();i!=mul.end();i++){
       (*i)->backward();
+    }
+  }
+  //train the layer
+  void train(){
+    for(int i=0;i<neuron;i++){
+      weight[i]->data+=learning_ratio*weight[i]->gradient;
+      bias[i]->data+=learning_ratio*bias[i]->gradient;
+      std::cout<<"haha "<<bias[i]->gradient<<std::endl;
     }
   }
   //this layer can receive data outside
@@ -180,6 +199,7 @@ public:
   void none(){}
   HiddenLayer(int n, int last_layer):Layer(HIDDENLAYER),neuron(n),last_layer_neuron_number(last_layer){
     //layer
+    for(int i=0;i<weights.size();i++)initialize_weights(weights[i]);
     //firstly, the single one dimension part
     for(int i=0;i<n;i++){
       bias.push_back(new Var(0,0));
@@ -232,6 +252,17 @@ public:
     for(int i=0;i<neuron;i++){
       for(int ii=0;ii<last_layer_neuron_number;ii++){
         mul[i][ii]->backward();
+      }
+    }
+  }
+  //train the layer
+  void train(){
+    for(int i=0;i<bias.size();i++){
+      bias[i]->data+=learning_ratio*bias[i]->gradient;
+    }
+    for(int i=0;i<weights.size();i++){
+      for(int ii=0;ii<weights[i].size();ii++){
+        weights[i][ii]->data+=learning_ratio*weights[i][ii]->gradient;
       }
     }
   }
@@ -380,6 +411,7 @@ public:
   }
   //pass gradient backward
   void backward(){
+    layer_output[0]->gradient=1;
     superadd->backward();
     for(int i=0;i<neuron;i++){
       square[i]->backward();
@@ -413,4 +445,6 @@ public:
     } 
   }
 };
+
+
 #endif

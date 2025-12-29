@@ -12,7 +12,6 @@ int main(){
   N.add_layer(MEANSQUAREERRORLAYER,2);
   N.build();
   vector<double> a={1.25,2};
-  vector<double> b={1.569,4};
-  cout<<N.loss(a,b);
-  //cout<<ok[0]<<" "<<ok[1]<<endl;
+  vector<double> b={3,4};
+  N.train_with_one_data(100,a,b,true);
 }
