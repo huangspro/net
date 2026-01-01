@@ -122,7 +122,6 @@ public:
   std::vector<Ope*> mul, add;
   void none(){}
   InputLayer(int n):neuron(n),Layer(INPUTLAYER){
-    initialize_weights(weight);
     for(int i=0;i<neuron;i++){
       //create the Nodes
       input.push_back(new Var(0,0));
@@ -138,6 +137,7 @@ public:
       mul[i]->load(input[i],weight[i],mul_output[i]);
       add[i]->load(mul_output[i],bias[i],layer_output[i]);
     }
+    initialize_weights(weight);
   }
   //forward the data
   void forward(){
@@ -162,7 +162,7 @@ public:
     for(int i=0;i<neuron;i++){
       weight[i]->data+=learning_ratio*weight[i]->gradient;
       bias[i]->data+=learning_ratio*bias[i]->gradient;
-      std::cout<<"haha "<<bias[i]->gradient<<std::endl;
+      std::cout<<"haha "<<weight[i]->gradient<<std::endl;
     }
   }
   //this layer can receive data outside
@@ -199,7 +199,6 @@ public:
   void none(){}
   HiddenLayer(int n, int last_layer):Layer(HIDDENLAYER),neuron(n),last_layer_neuron_number(last_layer){
     //layer
-    for(int i=0;i<weights.size();i++)initialize_weights(weights[i]);
     //firstly, the single one dimension part
     for(int i=0;i<n;i++){
       bias.push_back(new Var(0,0));
@@ -221,6 +220,8 @@ public:
         //load the multiply nodes
         tem_mul[ii]->load(tem_weights[ii],input[ii] , tem_mul_output[ii]);
       }
+      initialize_weights(weights[i]);
+
       mul_output.push_back(tem_mul_output);
       weights.push_back(tem_weights);
       mul.push_back(tem_mul);
