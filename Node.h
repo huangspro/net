@@ -7,7 +7,7 @@ This file also contains the realisation of forward and gradient backward passing
 #define _OPE_H_
 #include <cmath>
 #include <vector>
-
+#include<iostream>
 class Var;
 class Ope {
 public:
@@ -43,8 +43,8 @@ public:
     out->data = a->data + b->data;
   }
   void backward() override {
-    a->gradient += out->gradient;
-    b->gradient += out->gradient;
+    a->gradient = out->gradient;
+    b->gradient = out->gradient;
   }
 };
 
@@ -68,9 +68,10 @@ public:
   }
   void load(Var* a, Var* b, Var* c){}
   void load(Var* a, Var* b){}
-  void backfard(){
+  void backward(){
     for(auto i=inputs.begin();i!=inputs.end();i++){
       (*i)->gradient=out->gradient;
+      std::cout<<"gradient: "<<(*i)->gradient;
     }
   }
 };
@@ -88,8 +89,8 @@ public:
     out->data = a->data * b->data;
   }
   void backward() override {
-    a->gradient += out->gradient * b->data;
-    b->gradient += out->gradient * a->data;
+    a->gradient = out->gradient * b->data;
+    b->gradient = out->gradient * a->data;
   }
 };
 
@@ -106,7 +107,7 @@ public:
     out->data = 1.0 / a->data;
   }
   void backward() override {
-    a->gradient += out->gradient * (-1.0 / (a->data * a->data));
+    a->gradient = out->gradient * (-1.0 / (a->data * a->data));
   }
 };
 
@@ -123,7 +124,7 @@ public:
     out->data = -1.0 * a->data;
   }
   void backward() override {
-    a->gradient += out->gradient * (-1.0);
+    a->gradient = out->gradient * (-1.0);
   }
 };
 
@@ -140,7 +141,7 @@ public:
     out->data = a->data > 0 ? a->data : 0;
   }
   void backward() override {
-    a->gradient += out->gradient * (a->data > 0 ? 1.0 : 0.0);
+    a->gradient = out->gradient * (a->data > 0 ? 1.0 : 0.0);
   }
 };
 
@@ -158,7 +159,7 @@ public:
   }
   void backward() override {
     double s = out->data; 
-    a->gradient += out->gradient * (s * (1.0 - s));
+    a->gradient = out->gradient * (s * (1.0 - s));
   }
 };
 
@@ -176,7 +177,7 @@ public:
   }
   void backward() override {
     double t = out->data;
-    a->gradient += out->gradient * (1.0 - t * t);
+    a->gradient = out->gradient * (1.0 - t * t);
   }
 };
 
@@ -193,7 +194,7 @@ public:
     out->data = exp(a->data);
   }
   void backward() override {
-    a->gradient += out->gradient * out->data;
+    a->gradient = out->gradient * out->data;
   }
 };
 
@@ -210,7 +211,7 @@ public:
     out->data = log(a->data);
   }
   void backward() override {
-    a->gradient += out->gradient * (1.0 / a->data);
+    a->gradient = out->gradient * (1.0 / a->data);
   }
 };
 
@@ -229,7 +230,7 @@ public:
     out->data = sqrt(a->data);
   }
   void backward() override {
-    a->gradient += out->gradient * (1.0 / (2.0 * out->data));
+    a->gradient = out->gradient * (1.0 / (2.0 * out->data));
   }
 };
 
@@ -246,7 +247,7 @@ public:
     out->data = (a->data)*(a->data);
   }
   void backward() override {
-    a->gradient += out->gradient * a->data*2;
+    a->gradient = out->gradient * a->data*2;
   }
 };
 #endif

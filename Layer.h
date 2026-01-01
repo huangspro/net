@@ -384,7 +384,7 @@ public:
       minus_output.push_back(new Var(0,0));
       add_output.push_back(new Var(0,0));
       square_output.push_back(new Var(0,0));
-      
+      std::cout<<"okok: "<<square_output[0]->gradient<<" koko";
       minus.push_back(new Minus());
       add.push_back(new Add());
       square.push_back(new Square());
@@ -414,12 +414,14 @@ public:
   void backward(){
     layer_output[0]->gradient=1;
     superadd->backward();
+    
     for(int i=0;i<neuron;i++){
       square[i]->backward();
     } 
     for(int i=0;i<neuron;i++){
       add[i]->backward();
-    } 
+    } std::cout<<"okok: "<<minus_output[0]->gradient<<" koko";
+    
     for(int i=0;i<neuron;i++){
       minus[i]->backward();
     } 

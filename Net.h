@@ -85,17 +85,6 @@ public:
     forward();
     return AllLayer.back()->loss_value;
   }
-  //calculate output of the net given data in vector form
-  std::vector<double> output(std::vector<double> input){
-    AllLayer[0]->input_data(input);
-    forward();
-    std::vector<Var*> tem=AllLayer[mark_output]->layer_output;
-    std::vector<double> result(tem.size());
-    for(int i=0;i<tem.size();i++){
-      result.push_back(tem[i]->data);
-    }
-    return result;
-  }
 };
 
 #endif
