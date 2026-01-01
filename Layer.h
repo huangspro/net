@@ -21,16 +21,7 @@ noted that an output layer is a combination of hidden layer and other layer
 #include "Node.h"
 #include<vector>
 #include<iostream>
-#include<random>
-void initialize_weights(std::vector<Var*>& weights) {
-    std::default_random_engine generator;
-    std::normal_distribution<double> distribution(0.0, 0.1);
 
-    for (auto& w : weights) {
-        w->data = distribution(generator);
-        w->gradient = 0.0;
-    }
-}
 //This class is only for produce polymorphism 
 class Layer{
 public:
@@ -79,6 +70,7 @@ public:
   }
   //forward the data
   void forward(){
+    std::cout<<"okok: "<<input[0]->gradient<<" koko"<<std::endl;
     for(auto i=opes.begin();i!=opes.end();i++){
       (*i)->forward();
     }
@@ -94,12 +86,14 @@ public:
     for(int i=0; i<last_layer_output.size(); i++){
       delete input[i];
       input[i]=last_layer_output[i];
+      opes[i]->load(input[i],layer_output[i]);
     }
   }
-  void connect_to_next_layer_input(std::vector<Var*> next_layer_input){
+  void connect_to_next_layer_input(std::vector<Var*>& next_layer_input){
     for(int i=0; i<next_layer_input.size(); i++){
       delete next_layer_input[i];
       next_layer_input[i]=layer_output[i];
+      opes[i]->load(input[i],layer_output[i]);
     }
   }
   //unload, noted that the input and output layer is connected to other, so they should be deleted casually
@@ -137,7 +131,6 @@ public:
       mul[i]->load(input[i],weight[i],mul_output[i]);
       add[i]->load(mul_output[i],bias[i],layer_output[i]);
     }
-    initialize_weights(weight);
   }
   //forward the data
   void forward(){
@@ -150,6 +143,8 @@ public:
   }
   //backward the gradient
   void backward(){
+    
+    
     for(auto i=add.begin();i!=add.end();i++){
       (*i)->backward();
     }
@@ -162,7 +157,6 @@ public:
     for(int i=0;i<neuron;i++){
       weight[i]->data+=learning_ratio*weight[i]->gradient;
       bias[i]->data+=learning_ratio*bias[i]->gradient;
-      std::cout<<"haha "<<weight[i]->gradient<<std::endl;
     }
   }
   //this layer can receive data outside
@@ -220,7 +214,6 @@ public:
         //load the multiply nodes
         tem_mul[ii]->load(tem_weights[ii],input[ii] , tem_mul_output[ii]);
       }
-      initialize_weights(weights[i]);
 
       mul_output.push_back(tem_mul_output);
       weights.push_back(tem_weights);
@@ -384,7 +377,7 @@ public:
       minus_output.push_back(new Var(0,0));
       add_output.push_back(new Var(0,0));
       square_output.push_back(new Var(0,0));
-      std::cout<<"okok: "<<square_output[0]->gradient<<" koko";
+
       minus.push_back(new Minus());
       add.push_back(new Add());
       square.push_back(new Square());
@@ -420,11 +413,12 @@ public:
     } 
     for(int i=0;i<neuron;i++){
       add[i]->backward();
-    } std::cout<<"okok: "<<minus_output[0]->gradient<<" koko";
+    } 
     
     for(int i=0;i<neuron;i++){
       minus[i]->backward();
     } 
+    
   }
   //this layer should receive data from outside
   void load_data_from_outside(std::vector<double> one_data){

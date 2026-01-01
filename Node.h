@@ -8,6 +8,8 @@ This file also contains the realisation of forward and gradient backward passing
 #include <cmath>
 #include <vector>
 #include<iostream>
+#include<random>
+
 class Var;
 class Ope {
 public:
@@ -25,7 +27,11 @@ class Var {
 public:
   double data=0;
   double gradient=0;
-  Var(double d, double g) : data(d), gradient(g) {}
+  Var(double d, double g) : data(d), gradient(g) {
+    std::default_random_engine generator;
+    std::normal_distribution<double> distribution(0.0, 0.1);
+    data=distribution(generator);
+  }
 };
 
 // =====================================================================================
@@ -71,7 +77,6 @@ public:
   void backward(){
     for(auto i=inputs.begin();i!=inputs.end();i++){
       (*i)->gradient=out->gradient;
-      std::cout<<"gradient: "<<(*i)->gradient;
     }
   }
 };
