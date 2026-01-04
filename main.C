@@ -8,7 +8,7 @@ using namespace std;
 int main(){
   InputLayer* I=new InputLayer(2);
   NonlinearLayer* N1=new NonlinearLayer(2, NonlinearLayer::TANH);
-  MeanSquareErrorLayer* M=new MeanSquareErrorLayer(2);
+  MeanSquareErrorLayer* M=new MeanSquareErrorLayer(1);
   NonlinearLayer* N2=new NonlinearLayer(10, NonlinearLayer::TANH);
   NonlinearLayer* N3=new NonlinearLayer(10, NonlinearLayer::LINEAR);
   HiddenLayer* H1=new HiddenLayer(10,2);
