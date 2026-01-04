@@ -13,19 +13,22 @@ int main(){
   N->connect_to_last_layer_output(I->layer_output);
   N->connect_to_next_layer_input(M->input);
   
-  vector<vector<double>> inputdata={15,25};
-  vector<double> testdata={-0.1,-0.3};
-  M->load_data_from_outside(testdata);
-  I->input_data(inputdata);
+  vector<vector<double>> inputdata={{1,1},{0,0},{0,1},{1,0}};
+  vector<double> testdata={0,0,1,1};
+  
   
   for(int i=0;i<10000;i++){
-    I->forward();
-    N->forward();
-    M->forward();
-    M->backward();
-    N->backward();
-    I->backward();
-    I->train();
+    for(int ii=0;ii<4;ii++){
+      M->load_data_from_outside(testdata[ii]);
+      I->input_data(inputdata[ii]);
+      I->forward();
+      N->forward();
+      M->forward();
+      M->backward();
+      N->backward();
+      I->backward();
+      I->train();
+    }
     if(i%100==0)cout<<"loss: "<<M->layer_output[0]->data<<endl;
   }
 
