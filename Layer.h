@@ -70,7 +70,6 @@ public:
   }
   //forward the data
   void forward(){
-    std::cout<<"okok: "<<input[0]->gradient<<" koko"<<std::endl;
     for(auto i=opes.begin();i!=opes.end();i++){
       (*i)->forward();
     }
@@ -143,8 +142,6 @@ public:
   }
   //backward the gradient
   void backward(){
-    
-    
     for(auto i=add.begin();i!=add.end();i++){
       (*i)->backward();
     }
@@ -418,7 +415,6 @@ public:
     for(int i=0;i<neuron;i++){
       minus[i]->backward();
     } 
-    
   }
   //this layer should receive data from outside
   void load_data_from_outside(std::vector<double> one_data){
