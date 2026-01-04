@@ -13,25 +13,20 @@ int main(){
   N->connect_to_last_layer_output(I->layer_output);
   N->connect_to_next_layer_input(M->input);
   
-  vector<double> inputdata={15,25};
-  vector<double> testdata={-10,-10};
+  vector<vector<double>> inputdata={15,25};
+  vector<double> testdata={-0.1,-0.3};
   M->load_data_from_outside(testdata);
   I->input_data(inputdata);
   
-  
-  I->forward();
-  N->forward();
-  M->forward();
-  M->backward();
-  N->backward();
-  I->backward();
-  cout<<"loss: "<<M->layer_output[0]->data<<endl;
-  cout<<"nonoutput: "<<N->layer_output[0]->data<<endl;
-  cout<<"nonoutput: "<<N->layer_output[1]->data<<endl;
-  cout<<"Minput: "<<M->input[0]->data<<endl;
-  cout<<"Minput: "<<M->input[1]->data<<endl;
-  cout<<"Minus-output: "<<M->minus_output[0]->data<<endl;
-  cout<<"Minus-output: "<<M->minus_output[1]->data<<endl;
-  cout<<M->add_output[0]->data<<endl;
-  cout<<M->add_output[1]->data<<endl;
+  for(int i=0;i<10000;i++){
+    I->forward();
+    N->forward();
+    M->forward();
+    M->backward();
+    N->backward();
+    I->backward();
+    I->train();
+    if(i%100==0)cout<<"loss: "<<M->layer_output[0]->data<<endl;
+  }
+
 }

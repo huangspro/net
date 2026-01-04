@@ -90,8 +90,8 @@ public:
   }
   void connect_to_next_layer_input(std::vector<Var*>& next_layer_input){
     for(int i=0; i<next_layer_input.size(); i++){
-      delete next_layer_input[i];
-      next_layer_input[i]=layer_output[i];
+      delete layer_output[i];
+      layer_output[i]=next_layer_input[i];
       opes[i]->load(input[i],layer_output[i]);
     }
   }
