@@ -24,8 +24,10 @@ int main(){
   vector<vector<double>> inputdata={{1,1},{0,0},{0,1},{1,0}};
   vector<vector<double>> testdata={{0},{0},{1},{1}};
   
-  
-  for(int i=0;i<10000;i++){
+  double last_loss=0;
+  int i=0;
+  while(true){
+  i++;
     for(int ii=0;ii<4;ii++){
       M->load_data_from_outside(testdata[ii]);
       I->input_data(inputdata[ii]);
@@ -47,8 +49,15 @@ int main(){
       I->backward();
       
       I->train();
+      H1->train();
+      H2->train();
+      
+      if(M->layer_output[0]->data==last_loss){
+        cout<<"epoch: "<<i;exit(0);
+      }
+      last_loss=M->layer_output[0]->data;
     }
-    if(i%100==0)cout<<"loss: "<<M->layer_output[0]->data<<endl;
+    if(i%10000==0)cout<<"loss: "<<M->layer_output[0]->data<<endl;
   }
 
 }
