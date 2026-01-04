@@ -149,6 +149,22 @@ public:
     a->gradient = out->gradient * (a->data > 0 ? 1.0 : 0.0);
   }
 };
+class Nothing : public Ope {
+public:
+  Var *a = nullptr, *out = nullptr;
+  Nothing() {}
+  void load(Var* a,Var* b, Var* c){}
+  void load(Var* input_a, Var* output) {
+    a = input_a; out = output;
+  }
+
+  void forward() override {
+    out->data = a->data;
+  }
+  void backward() override {
+    a->gradient = out->gradient;
+  }
+};
 
 class Sigmoid : public Ope {
 public:

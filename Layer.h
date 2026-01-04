@@ -46,6 +46,7 @@ public:
   static const int RELU=1;
   static const int TANH=2;
   static const int SIGMOID=3;
+  static const int LINEAR=4;
   int neuron;
   int function_type;
   std::vector<Var*> input, layer_output;
@@ -63,6 +64,8 @@ public:
           opes.push_back(new Tanh());break;
         case SIGMOID:
           opes.push_back(new Sigmoid());break;
+        case LINEAR:
+          opes.push_back(new Nothing());break;
       }
       //load all operation nodes
       opes[i]->load(input[i],layer_output[i]);
