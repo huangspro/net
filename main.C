@@ -1,6 +1,5 @@
 #include "Node.h"
 #include "Layer.h"
-#include "Net.h"
 #include<iostream>
 
 using namespace std;
