@@ -9,10 +9,10 @@ int main(){
   InputLayer* I=new InputLayer(2);
   NonlinearLayer* N1=new NonlinearLayer(2, NonlinearLayer::TANH);
   MeanSquareErrorLayer* M=new MeanSquareErrorLayer(1);
-  NonlinearLayer* N2=new NonlinearLayer(1, NonlinearLayer::TANH);
+  NonlinearLayer* N2=new NonlinearLayer(15, NonlinearLayer::TANH);
   NonlinearLayer* N3=new NonlinearLayer(1, NonlinearLayer::LINEAR);
-  HiddenLayer* H1=new HiddenLayer(1,2);
-  HiddenLayer* H2=new HiddenLayer(1,1);
+  HiddenLayer* H1=new HiddenLayer(15,2);
+  HiddenLayer* H2=new HiddenLayer(1,15);
   
   N1->connect_to_last_layer_output(I->layer_output);
   N1->connect_to_next_layer_input(H1->input);
@@ -21,15 +21,15 @@ int main(){
   N3->connect_to_last_layer_output(H2->layer_output);
   N3->connect_to_next_layer_input(M->input);
   
-  vector<vector<double>> inputdata={{160,45},{165,55},{170,60},{172,65},{175,70},{168,72},{180,80},{158,50},{162,68},{170,85}};
-  vector<vector<double>> testdata={{17.6},{20.2},{20.8},{22.0},{22.9},{25.5},{24.7},{20.0},{25.9},{29.4}};
+  vector<vector<double>> inputdata={{2,3},{3,4},{1,0},{5,5}};
+  vector<vector<double>> testdata={{13.2},{25.1},{1},{25}};
   
   double last_loss;
   int i=0;
   while(true){
     i++;
     last_loss=0;
-    for(int ii=0;ii<10;ii++){
+    for(int ii=0;ii<inputdata.size();ii++){
       M->load_data_from_outside(testdata[ii]);
       I->input_data(inputdata[ii]);
       
@@ -52,13 +52,10 @@ int main(){
       I->train();
       H1->train();
       H2->train();
-      
+      if(i%100000==0)cout<<"data: "<<ii<<" predict: "<<H2->layer_output[0]->data<<endl;
       last_loss+=M->layer_output[0]->data;
     }
-    if(i%100000==0){//cout<<"loss: "<<last_loss/10<<endl;
-      cout<<I->weight[0]->gradient<<" "<<I->weight[1]->gradient<<" "<<H1->weights[0][0]->gradient<<" "<<H1->weights[0][1]->gradient<<endl;
-      cout<<H2->weights[0][0]->gradient<<endl;
-    }
+    if(i%100000==0)cout<<last_loss<<endl;
   }
 
 }
