@@ -17,7 +17,7 @@ noted that an output layer is a combination of hidden layer and other layer
 #define SOFTMAXLAYER 3
 #define HIDDENLAYER 4
 #define MEANSQUAREERRORLAYER 5
-#define learning_ratio -0.005
+#define learning_ratio -0.05
 #include "Node.h"
 #include<vector>
 #include<iostream>

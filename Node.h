@@ -28,8 +28,9 @@ public:
   double data=0;
   double gradient=0;
   Var(double d, double g) : data(d), gradient(g) {
-    std::default_random_engine generator;
-    std::normal_distribution<double> distribution(0.0, 0.1);
+    static std::random_device rd;
+    static std::default_random_engine generator(rd());
+    std::normal_distribution<double> distribution(0.0, 0.7);
     data=distribution(generator);
   }
 };
