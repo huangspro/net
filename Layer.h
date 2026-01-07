@@ -12,7 +12,7 @@ noted that an output layer is a combination of hidden layer and other layer
 #ifndef _LAYER_H_
 #define _LAYER_H_
 
-#define learning_ratio -0.03
+#define learning_ratio -0.001
 #include "Node.h"
 #include<vector>
 #include<iostream>
@@ -422,7 +422,7 @@ public:
 };
 
 //CrossEntropyLossLyaer
-class CrossEntropyLossLyaer{
+class CrossEntropyLossLayer{
 public:
   double loss_value;
   int neuron;
@@ -430,7 +430,7 @@ public:
   std::vector<Ope*> ln,mul;
   Ope* superadd, *minus;
 
-  CrossEntropyLossLyaer(int n):neuron(n){
+  CrossEntropyLossLayer(int n):neuron(n){
     superadd=new SuperAdd();
     minus=new Minus();
     layer_output.push_back(new Var(0,0));
@@ -483,7 +483,7 @@ public:
       input_from_outside[i]->data=one_data[i];
     }
   }
-  ~CrossEntropyLossLyaer(){
+  ~CrossEntropyLossLayer(){
     delete layer_output[0];
     delete superadd;
     delete minus;
