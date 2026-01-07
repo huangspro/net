@@ -12,7 +12,7 @@ noted that an output layer is a combination of hidden layer and other layer
 #ifndef _LAYER_H_
 #define _LAYER_H_
 
-#define learning_ratio - 0.001
+#define learning_ratio - 0.018
 #include "Node.h"
 
 #include <vector>

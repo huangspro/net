@@ -31,7 +31,7 @@ class Var {
   gradient(g) {
     static std::random_device rd;
     static std::default_random_engine generator(rd());
-    std::normal_distribution < double > distribution(0.0, 0.7);
+    std::normal_distribution < double > distribution(0.0, 0.141);
     data = distribution(generator);
   }
 };
