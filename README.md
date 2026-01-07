@@ -5,16 +5,17 @@
 ## 目前实现情况
 
 1. **计算图节点定义**
-    - 定义了计算节点（操作节点）和数据节点（变量节点），用于构建计算图。
+    - Node.h 定义了计算节点（操作节点）和数据节点（变量节点），用于构建计算图。
 
 2. **神经网络层定义**
-    - 输入层
-    - 隐藏层
-    - 非线性函数层（如 ReLU、Sigmoid 等）
-    - Softmax 层
-    - 损失函数层（只实现了均方误差）
+    - Layer.h
+    - InputLayer 输入层
+    - HiddenLayer 隐藏层
+    - NonlinearLayer非线性函数层（如 ReLU、Sigmoid 等）
+    - SoftmaxLayer Softmax 层
+    - MeanSquareErrorLayer CrossEntropyLossLayer损失函数层
 
-3. **层间连接**
+3. **层间连接(main1.C main2.C)**
     - 不同的层通过非线性函数层的两个函数（前向函数和反向函数）连接在一起。
     - 使得数据可以进行前向传播，梯度可以进行反向传播。
 
