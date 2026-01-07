@@ -81,4 +81,11 @@ int main(){
     if(i%100000==0){cout<<last_loss/50<<endl;}
   }
 
+  delete C;   
+  delete N3;
+  delete H2;  
+  delete N2;
+  delete H1;
+  delete N1;
+  delete I;   
 }
