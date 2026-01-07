@@ -9,11 +9,11 @@
 
 2. **神经网络层定义**
     - Layer.h
-    - InputLayer 输入层
-    - HiddenLayer 隐藏层
-    - NonlinearLayer非线性函数层（如 ReLU、Sigmoid 等）
-    - SoftmaxLayer Softmax 层
-    - MeanSquareErrorLayer CrossEntropyLossLayer损失函数层
+    - InputLayer(输入层)
+    - HiddenLayer(隐藏层)
+    - NonlinearLayer(非线性函数层(如 ReLU、Sigmoid 等))
+    - SoftmaxLayer(Softmax 层)
+    - MeanSquareErrorLayer CrossEntropyLossLayer(损失函数层)
 
 3. **层间连接(main1.C main2.C)**
     - 不同的层通过非线性函数层的两个函数（前向函数和反向函数）连接在一起。
