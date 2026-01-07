@@ -1,5 +1,4 @@
-#include "Node.h"
-#include "Layer.h"
+#include "base_class/Layer.h"
 #include<iostream>
 
 using namespace std;
