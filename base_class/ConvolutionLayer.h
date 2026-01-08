@@ -4,13 +4,15 @@
 #include "Node.h"
 #include<vector>
 #include<iostream>
+#include<random>
+
 class ConvolutionLayer{
 public:
   int conkernel_row, conkernel_col, step, input_row, input_col;
-  std::vector<std::vector<double>>* input;
-  std::vector<std::vector<double>>* output;
-  std::vector<std::vector<double>>* conkernel;
-  ConvolutionLayer(int r, int c, int s);
+  std::vector<std::vector<Var*>> input;
+  std::vector<std::vector<Var*>> output;
+  std::vector<std::vector<Var*>> conkernel;
+  ConvolutionLayer(int r, int c, int input_r, int input_c, int s);
   void forward();
   void backward();
   void load(std::vector<std::vector<double>>* i){input = i; input_row = i->size(); input_col = (*i)[0].size();} //load data from outside
