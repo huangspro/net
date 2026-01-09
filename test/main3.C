@@ -122,7 +122,7 @@ int main(){
   
   double last_loss;
   int i=0;
-  while(true){
+  while(i<100000){
     i++;
     last_loss=0;
     for(int ii=0;ii<inputdata.size();ii++){
@@ -156,12 +156,13 @@ int main(){
       H2->train();
       H3->train();
       CON->train();
-      //if(i%100000==0)cout<<"真实值: "<<testdata[ii][0]<<" 预测: "<<(N3->layer_output[0]->data>0.5?'1':'0')<<endl;
+      
+      if(i%10000==0)cout<<CON->conkernel[0][0]->data<<" "<<CON->conkernel[0][1]->data<<endl;
+      if(i%10000==0)cout<<CON->conkernel[1][0]->data<<" "<<CON->conkernel[1][1]->data<<endl;
+      if(i%10000==0)cout<<"真实值: "<<testdata[ii][0]<<testdata[ii][1]<<testdata[ii][2]<<" 预测: "<<(N4->layer_output[0]->data>0.5?'1':'0')<<(N4->layer_output[1]->data>0.5?'1':'0')<<(N4->layer_output[2]->data>0.5?'1':'0')<<endl;
       last_loss+=C->layer_output[0]->data;
     }
-    if(i%5==0){cout<<CON->conkernel[0][0]->gradient<<" "<<CON->conkernel[0][1]->data<<endl;
-  cout<<CON->conkernel[1][0]->data<<" "<<CON->conkernel[1][1]->data<<endl;cout<<last_loss/15<<endl;}
-    if(i==100000)break;
+    if(i%10000==0)cout<<last_loss/15<<endl;
   }
   cout<<CON->conkernel[0][0]->data<<" "<<CON->conkernel[0][1]->data<<endl;
   cout<<CON->conkernel[1][0]->data<<" "<<CON->conkernel[1][1]->data<<endl;
