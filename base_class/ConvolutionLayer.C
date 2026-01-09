@@ -32,7 +32,7 @@ ConvolutionLayer::ConvolutionLayer(int r, int c, int input_r, int input_c, int s
       for(int ii=0;ii<(input_col-conkernel_col)/step+1;ii++){
         tem.push_back(new Var(0,0));
       }
-      output.push_back(tem);
+      layer_output.push_back(tem);
     }
   }
 }
@@ -54,10 +54,10 @@ void ConvolutionLayer::forward(){
 void ConvolutionLayer::backward(){
   for(int k1=0;k1<conkernel.size();k1++){//for each kernel
     for(int k2=0;k2<conkernel.size();k2++){
-      for(int i=0;i<output.size();i++){//for each output
-        for(int j=0;j<output[0].size();j++){
+      for(int i=0;i<layer_output.size();i++){//for each output
+        for(int j=0;j<layer_output[0].size();j++){
           //gradient++
-          g2(k1,k2)->gradient+=g(i+k1,j+k2)*output[i][j]->gradient;
+          g2(k1,k2)->gradient+=g(i+k1,j+k2)*layer_output[i][j]->gradient;
           std::cout<<"test: "<<g2(k1,k2)->gradient<<std::endl;
         }
       }
@@ -87,10 +87,24 @@ double ConvolutionLayer::cal(int a, int b){
   return result;
 }
 
-void ConvolutionLayer::load(std::vector<std::vector<double>>& input_data){
+void ConvolutionLayer::load_data_from_outside(std::vector<std::vector<double>>& input_data){
   for(int i=0;i<input_row;i++){
     for(int ii=0;ii<input_col;ii++){
       input[i][ii]->data = input_data[i][ii];
     }
+  }
+}
+
+void ConvolutionLayer::connect_to_next_conlayer_input(std::vector<std::vector<Var*>> next_layer_input){
+  for(int i = 0; i < next_layer_input.size(); i++) {
+    delete layer_output[i];
+    layer_output[i] = next_layer_input[i];
+  }
+}
+
+void ConvolutionLayer::connect_to_last_conlayer_output(std::vector<std::vector<Var*>> last_layer_output){
+  for (int i = 0; i < last_layer_output.size(); i++) {
+    delete input[i];
+    input[i] = last_layer_output[i];
   }
 }

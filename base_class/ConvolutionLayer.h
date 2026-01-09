@@ -12,12 +12,14 @@ class ConvolutionLayer{
 public:
   int conkernel_row, conkernel_col, step, input_row, input_col;
   std::vector<std::vector<Var*>> input;
-  std::vector<std::vector<Var*>> output;
+  std::vector<std::vector<Var*>> layer_output;
   std::vector<std::vector<Var*>> conkernel;
   ConvolutionLayer(int r, int c, int input_r, int input_c, int s);
   void forward();
   void backward();
-  void load(std::vector<std::vector<double>>&); //load input data from outside
+  void connect_to_next_layer_input(std::vector<std::vector<Var*>>); //connect to the next layer
+  void connect_to_last_layer_output(std::vector<std::vector<Var*>>); //connect to the last layer
+  void load_data_from_outside(std::vector<std::vector<double>>&); //load input data from outside
   double g(int row, int col); //get data from input
   Var* g2(int row, int col); //get data from kernel
   void w(int row, int col, double data); //write data to output
