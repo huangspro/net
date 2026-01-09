@@ -32,7 +32,7 @@ ConvolutionLayer::ConvolutionLayer(int r, int c, int input_r, int input_c, int s
       for(int ii=0;ii<(input_col-conkernel_col)/step+1;ii++){
         tem.push_back(new Var(0,0));
       }
-      input.push_back(tem);
+      output.push_back(tem);
     }
   }
 }
@@ -40,18 +40,29 @@ ConvolutionLayer::ConvolutionLayer(int r, int c, int input_r, int input_c, int s
 void ConvolutionLayer::forward(){
   double output_i = 0;
   double output_j = 0;
-  for(int i=0;i<input_row;i+=step){
-    for(int j=0;j<input_col;j+=step){
+  for(int i=0;i<(input_row-conkernel_row)/step+1;i+=step){
+    for(int j=0;j<(input_col-conkernel_col)/step+1;j+=step){
       //calculate the output on point i,j
       w(output_i, output_j, cal(i,j));
       output_j++;
     }
+    output_j=0;
     output_i++;
   }
 }
-//pass gradient backward
+//pass gradient backward, according to the formula: Output_i,j/dK_k1,k2 = I_i+k1,j+k2
 void ConvolutionLayer::backward(){
-  
+  for(int k1=0;k1<conkernel.size();k1++){//for each kernel
+    for(int k2=0;k2<conkernel.size();k2++){
+      for(int i=0;i<output.size();i++){//for each output
+        for(int j=0;j<output[0].size();j++){
+          //gradient++
+          g2(k1,k2)->gradient+=g(i+k1,j+k2)*output[i][j]->gradient;
+          std::cout<<"test: "<<g2(k1,k2)->gradient<<std::endl;
+        }
+      }
+    }
+  }
 }
 //get data from input
 double ConvolutionLayer::g(int row, int col){
@@ -62,16 +73,24 @@ void ConvolutionLayer::w(int row, int col, double data){
   conkernel[row][col]->data = data;
 }
 //get data from kernel
-double ConvolutionLayer::g2(int row, int col){
-  return input[row][col]->data;
+Var* ConvolutionLayer::g2(int row, int col){
+  return input[row][col];
 }
 //calculate out the output of input, input the left-top
 double ConvolutionLayer::cal(int a, int b){
   double result=0;
   for(int i=0;i<conkernel_row;i++){
     for(int ii=0;ii<conkernel_col;ii++){
-      result+=g(a+i,b+ii)*g2(i,ii);
+      result+=g(a+i,b+ii)*g2(i,ii)->data;
     }
   }
   return result;
+}
+
+void ConvolutionLayer::load(std::vector<std::vector<double>>& input_data){
+  for(int i=0;i<input_row;i++){
+    for(int ii=0;ii<input_col;ii++){
+      input[i][ii]->data = input_data[i][ii];
+    }
+  }
 }
