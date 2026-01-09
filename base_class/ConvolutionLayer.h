@@ -15,13 +15,19 @@ public:
   std::vector<std::vector<Var*>> layer_output;
   std::vector<std::vector<Var*>> conkernel;
   ConvolutionLayer(int r, int c, int input_r, int input_c, int s);
+  
+  //computing function
   void forward();
   void backward();
+  
+  //these function dodn't check the input or output size of the next or previous layers, if the number of neutro doesn't match, the program will crash
   void connect_to_next_conlayer_input(std::vector<std::vector<Var*>>); //connect to the next convolutional layer
   void connect_to_last_conlayer_output(std::vector<std::vector<Var*>>); //connect to the last convolutional layer
-  void connect_to_next_layer_input(std::vector<std::vector<Var*>>); //connect to the next convolutional layer
-  void connect_to_last_layer_output(std::vector<std::vector<Var*>>); //connect to the last convolutional layer
+  void connect_to_next_layer_input(std::vector<std::vector<Var*>>); //connect to the next common layer
+  void connect_to_last_layer_output(std::vector<std::vector<Var*>>); //connect to the last common layer
   void load_data_from_outside(std::vector<std::vector<double>>&); //load input data from outside
+  
+  //tool function
   double g(int row, int col); //get data from input
   Var* g2(int row, int col); //get data from kernel
   void w(int row, int col, double data); //write data to output
