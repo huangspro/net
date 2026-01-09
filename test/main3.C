@@ -155,13 +155,14 @@ int main(){
       H1->train();
       H2->train();
       H3->train();
-      CON->train();
+      
       
       if(i%10000==0)cout<<CON->conkernel[0][0]->data<<" "<<CON->conkernel[0][1]->data<<endl;
       if(i%10000==0)cout<<CON->conkernel[1][0]->data<<" "<<CON->conkernel[1][1]->data<<endl;
       if(i%10000==0)cout<<"真实值: "<<testdata[ii][0]<<testdata[ii][1]<<testdata[ii][2]<<" 预测: "<<(N4->layer_output[0]->data>0.5?'1':'0')<<(N4->layer_output[1]->data>0.5?'1':'0')<<(N4->layer_output[2]->data>0.5?'1':'0')<<endl;
       last_loss+=C->layer_output[0]->data;
     }
+    CON->train();
     if(i%10000==0)cout<<last_loss/15<<endl;
   }
   cout<<CON->conkernel[0][0]->data<<" "<<CON->conkernel[0][1]->data<<endl;
