@@ -17,8 +17,10 @@ public:
   ConvolutionLayer(int r, int c, int input_r, int input_c, int s);
   void forward();
   void backward();
-  void connect_to_next_layer_input(std::vector<std::vector<Var*>>); //connect to the next layer
-  void connect_to_last_layer_output(std::vector<std::vector<Var*>>); //connect to the last layer
+  void connect_to_next_conlayer_input(std::vector<std::vector<Var*>>); //connect to the next convolutional layer
+  void connect_to_last_conlayer_output(std::vector<std::vector<Var*>>); //connect to the last convolutional layer
+  void connect_to_next_layer_input(std::vector<std::vector<Var*>>); //connect to the next convolutional layer
+  void connect_to_last_layer_output(std::vector<std::vector<Var*>>); //connect to the last convolutional layer
   void load_data_from_outside(std::vector<std::vector<double>>&); //load input data from outside
   double g(int row, int col); //get data from input
   Var* g2(int row, int col); //get data from kernel

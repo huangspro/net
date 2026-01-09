@@ -96,13 +96,29 @@ void ConvolutionLayer::load_data_from_outside(std::vector<std::vector<double>>& 
 }
 
 void ConvolutionLayer::connect_to_next_conlayer_input(std::vector<std::vector<Var*>> next_layer_input){
+  for(int i = 0; i < layer_output.size(); i++) {
+    for(int j = 0; j < layer_output[0].size(); j++) {
+      delete layer_output[i][j];
+      layer_output[i][j] = next_layer_input[i*j];
+    }
+  }
+}
+
+void ConvolutionLayer::connect_to_last_conlayer_output(std::vector<std::vector<Var*>> last_layer_output){
+  for (int i = 0; i < last_layer_output.size(); i++) {
+    delete input[i];
+    input[i] = last_layer_output[i];
+  }
+}
+
+void ConvolutionLayer::connect_to_next_layer_input(std::vector<std::vector<Var*>> next_layer_input){
   for(int i = 0; i < next_layer_input.size(); i++) {
     delete layer_output[i];
     layer_output[i] = next_layer_input[i];
   }
 }
 
-void ConvolutionLayer::connect_to_last_conlayer_output(std::vector<std::vector<Var*>> last_layer_output){
+void ConvolutionLayer::connect_to_last_layer_output(std::vector<std::vector<Var*>> last_layer_output){
   for (int i = 0; i < last_layer_output.size(); i++) {
     delete input[i];
     input[i] = last_layer_output[i];
