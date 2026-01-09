@@ -15,7 +15,7 @@ int main(){
   NonlinearLayer* N3 = new NonlinearLayer(10, NonlinearLayer::TANH); 
   HiddenLayer* H3 = new HiddenLayer(3, 10);                     
   NonlinearLayer* N4 = new NonlinearLayer(3, NonlinearLayer::TANH);  
-  MeanSquareErrorLayer* C = new MeanSquareErrorLayer(1);         
+  MeanSquareErrorLayer* C = new MeanSquareErrorLayer(3);         
 
 // 连接层
   CON->connect_to_next_layer_input(I->input);
@@ -128,7 +128,7 @@ int main(){
     for(int ii=0;ii<inputdata.size();ii++){
       C->load_data_from_outside(testdata[ii]);
       CON->load_data_from_outside(inputdata[ii]);
-      cout<<i<<flush;
+      
       CON->forward();
       I->forward();
       N1->forward();
@@ -155,17 +155,24 @@ int main(){
       H1->train();
       H2->train();
       H3->train();
+      CON->train();
       //if(i%100000==0)cout<<"真实值: "<<testdata[ii][0]<<" 预测: "<<(N3->layer_output[0]->data>0.5?'1':'0')<<endl;
       last_loss+=C->layer_output[0]->data;
     }
-    if(i%100000==0){cout<<last_loss/50<<endl;}
+    if(i%5==0){cout<<CON->conkernel[0][0]->gradient<<" "<<CON->conkernel[0][1]->data<<endl;
+  cout<<CON->conkernel[1][0]->data<<" "<<CON->conkernel[1][1]->data<<endl;cout<<last_loss/15<<endl;}
+    if(i==100000)break;
   }
-
-  delete C;   
+  cout<<CON->conkernel[0][0]->data<<" "<<CON->conkernel[0][1]->data<<endl;
+  cout<<CON->conkernel[1][0]->data<<" "<<CON->conkernel[1][1]->data<<endl;
+  /*delete C; 
+  delete CON;
+  delete N4;
+  delete H3;
   delete N3;
   delete H2;  
   delete N2;
   delete H1;
   delete N1;
-  delete I;   
+  delete I; */  
 }
